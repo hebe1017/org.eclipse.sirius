@@ -95,7 +95,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
         final EObjectSelectionWizard wizard = new EObjectSelectionWizard(EObjectSelectionWizard.WIZARD_GENERIC_DIALOG_TITLE, variable.getMessage(), null, input,
                 ViewHelper.INSTANCE.createAdapterFactory());
         wizard.setMany(variable.isMultiple());
-        final WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        final WizardDialog dialog = new WizardDialog(getActiveShell(), wizard);
         final int result = dialog.open();
         if (result == Window.OK) {
             if (!variable.isMultiple() && wizard.getSelectedEObject() != null) {
@@ -153,7 +153,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
             description += "\n\n"; //$NON-NLS-1$
         }
         description += Messages.createRepresentationInputDialog_NewRepresentationNameLabel;
-        final InputDialog askSiriusName = new InputDialog(Display.getDefault().getActiveShell(), MessageFormat.format(Messages.createRepresentationInputDialog_Title, representationDescriptionName),
+        final InputDialog askSiriusName = new InputDialog(getActiveShell(), MessageFormat.format(Messages.createRepresentationInputDialog_Title, representationDescriptionName),
                 description, defaultName, new IInputValidator() {
 
                     @Override
@@ -169,13 +169,13 @@ public abstract class AbstractSWTCallback implements UICallBack {
 
     @Override
     public boolean openEObjectsDialogMessage(final Collection<EObject> objects, final String title, final String message) {
-        return EMFMessageDialog.openQuestionWithEObjects(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), ViewHelper.INSTANCE.createAdapterFactory(), objects, title, message);
+        return EMFMessageDialog.openQuestionWithEObjects(getActiveShell(), ViewHelper.INSTANCE.createAdapterFactory(), objects, title, message);
     }
 
     @Override
     public void openRepresentation(final Session openedSession, final DRepresentation representation) {
         try {
-            new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell()).run(false, false, new IRunnableWithProgress() {
+            new ProgressMonitorDialog(getActiveShell()).run(false, false, new IRunnableWithProgress() {
 
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -202,7 +202,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
     public Collection<EObject> askForEObjects(String message, TreeItemWrapper input, AdapterFactory factory) throws InterruptedException {
         final EObjectSelectionWizard wizard = new EObjectSelectionWizard(EObjectSelectionWizard.WIZARD_GENERIC_DIALOG_TITLE, message, null, input, factory);
         wizard.setMany(true);
-        final WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        final WizardDialog dialog = new WizardDialog(getActiveShell(), wizard);
         final int result = dialog.open();
         if (result == Window.OK) {
             return wizard.getSelectedEObjects();
@@ -214,7 +214,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
     public EObject askForEObject(String message, TreeItemWrapper input, AdapterFactory factory) throws InterruptedException {
         final EObjectSelectionWizard wizard = new EObjectSelectionWizard(EObjectSelectionWizard.WIZARD_GENERIC_DIALOG_TITLE, message, null, input, factory);
         wizard.setMany(false);
-        final WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        final WizardDialog dialog = new WizardDialog(getActiveShell(), wizard);
         final int result = dialog.open();
         if (result == Window.OK) {
             return wizard.getSelectedEObject();
@@ -224,7 +224,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
 
     @Override
     public List<String> askForTypedVariable(List<TypedVariable> typedVariableList, List<String> defaultValues) throws InterruptedException {
-        final TypedVariableValueDialog dialog = new TypedVariableValueDialog(typedVariableList, defaultValues, PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+        final TypedVariableValueDialog dialog = new TypedVariableValueDialog(typedVariableList, defaultValues, getActiveShell());
         final int result = dialog.open();
         if (result == Window.OK) {
             return dialog.getValues();
@@ -258,8 +258,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
             deleteRepresenationDialogTitle = org.eclipse.sirius.viewpoint.provider.Messages.AbstractSWTCallback_DeleteRepresentationAction_title_plural;
             deletionMessage = org.eclipse.sirius.viewpoint.provider.Messages.AbstractSWTCallback_DeleteRepresentationAction_message_plural;
         }
-        Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        return MessageDialog.openConfirm(shell, deleteRepresenationDialogTitle, deletionMessage);
+        return MessageDialog.openConfirm(getActiveShell(), deleteRepresenationDialogTitle, deletionMessage);
     }
 
     /**
@@ -390,7 +389,7 @@ public abstract class AbstractSWTCallback implements UICallBack {
         if (askUserToSaveAutomaticMigration(session, getSessionNameToDisplayWhileSaving(session))) {
             PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
                 try {
-                    new ProgressMonitorDialog(PlatformUI.getWorkbench().getDisplay().getActiveShell()).run(false, false, new WorkspaceModifyOperation() {
+                    new ProgressMonitorDialog(getActiveShell()).run(false, false, new WorkspaceModifyOperation() {
                         @Override
                         protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
                             session.save(monitor);
